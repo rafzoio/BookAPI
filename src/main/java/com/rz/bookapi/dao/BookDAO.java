@@ -148,4 +148,26 @@ public class BookDAO {
             throw new RuntimeException(se);
         }
     }
+
+    public Book getBookByTitle(String title) {
+
+        openConnection();
+        oneBook = null;
+        // Create select statement and execute it
+        try {
+            String selectSQL = "select * from books where title='" + title + "';";
+            ResultSet rs1 = stmt.executeQuery(selectSQL);
+            // Retrieve the results
+            while (rs1.next()) {
+                oneBook = getNextBook(rs1);
+            }
+
+            stmt.close();
+            closeConnection();
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+
+        return oneBook;
+    }
 }
