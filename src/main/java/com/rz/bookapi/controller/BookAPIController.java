@@ -3,6 +3,7 @@ package com.rz.bookapi.controller;
 import com.rz.bookapi.dao.BookDAO;
 import com.rz.bookapi.model.Book;
 import com.rz.bookapi.model.BookList;
+import com.rz.bookapi.utils.InputStreamUtils;
 import com.rz.bookapi.utils.RequestReader;
 import com.rz.bookapi.utils.ResponseWriter;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,19 +17,33 @@ import java.util.List;
 @WebServlet(name = "BookAPI", value = "/book-api")
 public class BookAPIController extends HttpServlet {
 
+    private BookDAO bookDAO;
+    private ResponseWriter responseWriter;
+    private RequestReader requestReader;
+
+    private InputStreamUtils inputStreamUtils;
+    @Override
+    public void init() {
+        bookDAO = new BookDAO();
+        responseWriter = new ResponseWriter();
+        requestReader = new RequestReader();
+        inputStreamUtils = new InputStreamUtils();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         PrintWriter out = response.getWriter();
-        ResponseWriter responseWriter = new ResponseWriter();
-
-        BookDAO bookDAO = new BookDAO();
-        BookList allBooks = new BookList();
 
         String format = request.getHeader("Accept");
 
-        int requestedID;
+        BookList allBooks = new BookList();
+
         String idParam = request.getParameter("id");
+        String titleParam = request.getParameter("title");
+
+        int requestedID;
+
         if (idParam != null) {
             try {
                 requestedID = Integer.parseInt(idParam);
@@ -36,6 +51,14 @@ public class BookAPIController extends HttpServlet {
             } catch (NumberFormatException e) {
                 response.setStatus(500);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID not found");
+                return;
+            }
+        } else if (titleParam != null) {
+            try {
+                allBooks.setBooks(List.of(bookDAO.getBookByTitle(titleParam)));
+            } catch (NumberFormatException e) {
+                response.setStatus(500);
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Title not found");
                 return;
             }
         } else {
@@ -55,26 +78,16 @@ public class BookAPIController extends HttpServlet {
 
         InputStream inputStream;
 
-        RequestReader requestReader = new RequestReader();
-        BookDAO bookDAO = new BookDAO();
-
         try {
             inputStream = request.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder requestDataBuilder = new StringBuilder();
 
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                requestDataBuilder.append(line);
-            }
-            String requestData = requestDataBuilder.toString();
-
+            String requestData = inputStreamUtils.getStringFromInputStream(inputStream);
             BookList books = requestReader.read(requestData, contentType);
 
             for(Book book : books.getBooks()) {
                 bookDAO.addBook(book);
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -86,7 +99,6 @@ public class BookAPIController extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         String idParam = request.getParameter("id");
 
-        BookDAO bookDAO = new BookDAO();
         bookDAO.deleteBook(Integer.parseInt(idParam));
 
         response.setStatus(200);
@@ -99,20 +111,10 @@ public class BookAPIController extends HttpServlet {
 
         InputStream inputStream;
 
-        RequestReader requestReader = new RequestReader();
-        BookDAO bookDAO = new BookDAO();
-
         try {
             inputStream = request.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder requestDataBuilder = new StringBuilder();
 
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                requestDataBuilder.append(line);
-            }
-            String requestData = requestDataBuilder.toString();
+            String requestData = inputStreamUtils.getStringFromInputStream(inputStream);
 
             BookList books = requestReader.read(requestData, contentType);
 
