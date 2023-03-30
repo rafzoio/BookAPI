@@ -55,7 +55,7 @@ public class BookAPIController extends HttpServlet {
             }
         } else if (titleParam != null) {
             try {
-                allBooks.setBooks(List.of(bookDAO.getBookByTitle(titleParam)));
+                allBooks.setBooks(bookDAO.searchBooks(titleParam));
             } catch (NumberFormatException e) {
                 response.setStatus(500);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Title not found");

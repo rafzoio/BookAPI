@@ -106,10 +106,10 @@ public class BookDAO {
     public void addBook(Book book) {
         openConnection();
         try {
-            PreparedStatement addBook = conn.prepareStatement("INSERT INTO books (id, title, author, date, genres, characters, synopsis) VALUES (?,?,?,?,?,?)");
-            addBook.setInt(1, book.getId());
-            addBook.setString(2, book.getTitle());
-            addBook.setString(3, book.getAuthor());
+            PreparedStatement addBook = conn.prepareStatement("INSERT INTO books (title, author, date, genres, characters, synopsis) VALUES (?,?,?,?,?,?)");
+            addBook.setString(1, book.getTitle());
+            addBook.setString(2, book.getAuthor());
+            addBook.setString(3, book.getDate());
             addBook.setString(4, book.getGenres());
             addBook.setString(5, book.getCharacters());
             addBook.setString(6, book.getSynopsis());
@@ -144,10 +144,11 @@ public class BookDAO {
             PreparedStatement updateBook = conn.prepareStatement("UPDATE books SET title = ?, author = ?, date = ?, genres = ?, characters = ?, synopsis = ? WHERE id = ?;");
             updateBook.setString(1, book.getTitle());
             updateBook.setString(2, book.getAuthor());
-            updateBook.setString(3, book.getGenres());
-            updateBook.setString(4, book.getCharacters());
-            updateBook.setString(5, book.getSynopsis());
-            updateBook.setInt(6, book.getId());
+            updateBook.setString(3, book.getDate());
+            updateBook.setString(4, book.getGenres());
+            updateBook.setString(5, book.getCharacters());
+            updateBook.setString(6, book.getSynopsis());
+            updateBook.setInt(7, book.getId());
 
             updateBook.executeUpdate();
 
@@ -158,25 +159,28 @@ public class BookDAO {
         }
     }
 
-    public Book getBookByTitle(String title) {
+    public List<Book> searchBooks(String keyword) {
 
-        book = null;
+
+        List<Book> allBooks = new ArrayList<>();
         openConnection();
+
         try {
-            PreparedStatement selectByTitle = conn.prepareStatement("select * from books where title=?");
-            selectByTitle.setString(1, title);
-            ResultSet rs1 = selectByTitle.executeQuery();
+            PreparedStatement getAllBooks = conn.prepareStatement("select * from books where title like ?;");
+            getAllBooks.setString(1, "%" + keyword + "%");
+            ResultSet rs1 = getAllBooks.executeQuery();
 
             while (rs1.next()) {
                 book = getNextBook(rs1);
+                allBooks.add(book);
             }
 
-            selectByTitle.close();
+            getAllBooks.close();
             closeConnection();
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
 
-        return book;
+        return allBooks;
     }
 }
