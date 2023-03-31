@@ -31,7 +31,7 @@ public class RequestReader {
             } catch (JAXBException e) {
                 throw new RuntimeException(e);
             }
-        } else if (contentType.equals("application/json"))  {
+        } else if (contentType.equals("application/json")) {
             return gson.fromJson(requestData, BookList.class);
         } else {
             return null;

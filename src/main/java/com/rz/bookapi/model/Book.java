@@ -11,15 +11,15 @@ import javax.xml.bind.annotation.XmlType;
 @NoArgsConstructor
 @AllArgsConstructor
 @XmlRootElement(name = "book")
-@XmlType(propOrder={"id", "title", "author", "date", "genres", "characters", "synopsis"})
+@XmlType(propOrder = {"id", "title", "author", "date", "genres", "characters", "synopsis"})
 
 public class Book {
 
-	private int id;
-	private String title;
-	private String author;
-	private String date;
-	private String genres;
-	private String characters;
-	private String synopsis;
+    private int id;
+    private String title;
+    private String author;
+    private String date;
+    private String genres;
+    private String characters;
+    private String synopsis;
 }

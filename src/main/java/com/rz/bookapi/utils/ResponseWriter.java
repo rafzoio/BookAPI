@@ -37,7 +37,6 @@ public class ResponseWriter {
                 throw new RuntimeException(e);
             }
             return sw.toString();
-        }
-        else return allBooks.toString();
+        } else return allBooks.toString();
     }
 }

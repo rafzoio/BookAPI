@@ -11,7 +11,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet(name = "BookAPI", value = "/book-api")
@@ -22,6 +24,7 @@ public class BookAPIController extends HttpServlet {
     private RequestReader requestReader;
 
     private InputStreamUtils inputStreamUtils;
+
     @Override
     public void init() {
         bookDAO = new BookDAO();
@@ -82,9 +85,10 @@ public class BookAPIController extends HttpServlet {
             inputStream = request.getInputStream();
 
             String requestData = inputStreamUtils.getStringFromInputStream(inputStream);
+
             BookList books = requestReader.read(requestData, contentType);
 
-            for(Book book : books.getBooks()) {
+            for (Book book : books.getBooks()) {
                 bookDAO.addBook(book);
             }
 
@@ -118,7 +122,7 @@ public class BookAPIController extends HttpServlet {
 
             BookList books = requestReader.read(requestData, contentType);
 
-            for(Book book : books.getBooks()) {
+            for (Book book : books.getBooks()) {
                 bookDAO.updateBook(book);
             }
         } catch (IOException e) {
