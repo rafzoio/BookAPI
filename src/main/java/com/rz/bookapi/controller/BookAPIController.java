@@ -71,6 +71,9 @@ public class BookAPIController extends HttpServlet {
         response.setContentType(format);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         out.write(responseWriter.print(allBooks, format));
     }
 
@@ -97,6 +100,9 @@ public class BookAPIController extends HttpServlet {
         }
 
         response.setStatus(201);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
     }
 
     @Override
@@ -105,6 +111,9 @@ public class BookAPIController extends HttpServlet {
 
         bookDAO.deleteBook(Integer.parseInt(idParam));
 
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setStatus(200);
     }
 
@@ -129,6 +138,9 @@ public class BookAPIController extends HttpServlet {
             throw new RuntimeException(e);
         }
 
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setStatus(200);
     }
 }
