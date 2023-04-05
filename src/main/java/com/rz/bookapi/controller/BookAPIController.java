@@ -40,6 +40,12 @@ public class BookAPIController extends HttpServlet {
 
         String format = request.getHeader("Accept");
 
+        String pageSizeParam = request.getParameter("pageSize");
+        String pageNumberParam = request.getParameter("page");
+
+        int pageSize = (pageSizeParam != null) ? Integer.parseInt(pageSizeParam) : 20;
+        int pageNumber = (pageNumberParam != null) ? Integer.parseInt(pageNumberParam) : 1;
+
         BookList allBooks = new BookList();
 
         String idParam = request.getParameter("id");
@@ -65,15 +71,17 @@ public class BookAPIController extends HttpServlet {
                 return;
             }
         } else {
-            allBooks.setBooks(bookDAO.getAllBooks());
+            allBooks.setBooks(bookDAO.getPageOfBooks(1000 + (pageSize * (pageNumber-1)), pageSize));
         }
 
         response.setContentType(format);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setHeader("Access-Control-Expose-Headers", "X-Total-Pages");
+        response.setHeader("X-Total-Pages", String.valueOf(bookDAO.getNumberOfPages(pageSize)));
         out.write(responseWriter.print(allBooks, format));
     }
 

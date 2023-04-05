@@ -183,4 +183,47 @@ public class BookDAO {
 
         return allBooks;
     }
+
+    public List<Book> getPageOfBooks(int i, int pageLength) {
+
+        List<Book> allBooks = new ArrayList<>();
+        openConnection();
+
+        try {
+            PreparedStatement getNumberOfBooks = conn.prepareStatement("select * from books where id >= ? limit ?");
+            getNumberOfBooks.setInt(1, i);
+            getNumberOfBooks.setInt(2, pageLength);
+            ResultSet rs1 = getNumberOfBooks.executeQuery();
+
+            while (rs1.next()) {
+                book = getNextBook(rs1);
+                allBooks.add(book);
+            }
+
+            getNumberOfBooks.close();
+            closeConnection();
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+
+        return allBooks;
+    }
+
+    public int getNumberOfPages(int pageSize) {
+        openConnection();
+        int count = 0;
+        try {
+            PreparedStatement countBookTable = conn.prepareStatement("select count(*) from books");
+            ResultSet rs1 = countBookTable.executeQuery();
+            if (rs1.next()) {
+                count = rs1.getInt(1);
+            }
+            countBookTable.close();
+            closeConnection();
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+
+        return Math.floorDiv(count, pageSize) + 1;
+    }
 }
