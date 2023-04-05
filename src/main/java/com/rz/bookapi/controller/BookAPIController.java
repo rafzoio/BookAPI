@@ -77,10 +77,6 @@ public class BookAPIController extends HttpServlet {
         response.setContentType(format);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        response.setHeader("Access-Control-Expose-Headers", "X-Total-Pages");
         response.setHeader("X-Total-Pages", String.valueOf(bookDAO.getNumberOfPages(pageSize)));
         out.write(responseWriter.print(allBooks, format));
     }
@@ -108,9 +104,6 @@ public class BookAPIController extends HttpServlet {
         }
 
         response.setStatus(201);
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
     }
 
     @Override
