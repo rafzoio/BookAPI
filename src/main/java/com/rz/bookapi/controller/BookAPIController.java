@@ -22,7 +22,6 @@ public class BookAPIController extends HttpServlet {
     private BookDAO bookDAO;
     private ResponseWriter responseWriter;
     private RequestReader requestReader;
-
     private InputStreamUtils inputStreamUtils;
 
     @Override

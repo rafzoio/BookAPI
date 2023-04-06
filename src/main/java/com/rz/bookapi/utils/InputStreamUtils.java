@@ -4,23 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 public class InputStreamUtils {
 
     public InputStreamUtils() {
 
     }
-
     public String getStringFromInputStream(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder requestDataBuilder = new StringBuilder();
-
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            requestDataBuilder.append(line);
-        }
-
-        return requestDataBuilder.toString();
+        Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8);
+        String result = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return result;
     }
 }
