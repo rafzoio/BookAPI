@@ -114,7 +114,6 @@ public class BookAPIController extends HttpServlet {
             out.write("Book with id " + idParam + " deleted.");
             response.setStatus(200);
         } else {
-            out.write("Book with id " + idParam + " deleted.");
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No book exists of id " + idParam);
         }
     }
@@ -124,7 +123,7 @@ public class BookAPIController extends HttpServlet {
 
         String contentType = request.getHeader("Content-Type");
 
-        int id;
+        Integer id = null;
 
         PrintWriter out = response.getWriter();
         InputStream inputStream;
@@ -141,10 +140,10 @@ public class BookAPIController extends HttpServlet {
                 id = book.getId();
             }
         } catch (IOException e) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No book exists of id " + idParam);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No book exists of id " + id);
         }
 
-        out.write("Book with id " + idParam + " was updated.");
+        out.write("Book with id " + id + " was updated.");
         response.setStatus(200);
     }
 }
