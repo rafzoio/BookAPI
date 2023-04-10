@@ -86,6 +86,8 @@ public class BookAPIController extends HttpServlet {
 
         InputStream inputStream;
 
+        PrintWriter out = response.getWriter();
+
         try {
             inputStream = request.getInputStream();
 
@@ -102,6 +104,7 @@ public class BookAPIController extends HttpServlet {
             return;
         }
 
+        out.write("Book added");
         response.setStatus(201);
     }
 

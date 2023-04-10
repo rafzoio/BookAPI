@@ -22,4 +22,13 @@ public class Book {
     private String genres;
     private String characters;
     private String synopsis;
+
+    public Book(String title, String author, String date, String genres, String characters, String synopsis) {
+        this.title = title;
+        this.author = author;
+        this.date = date;
+        this.genres = genres;
+        this.characters = characters;
+        this.synopsis = synopsis;
+    }
 }

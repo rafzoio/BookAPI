@@ -38,13 +38,13 @@ public class ResponseWriter {
             }
             return sw.toString();
         } else if (format.equals("text/plain")) {
-            return csvBuilder(allBooks);
+            return bookToDelimitedString(allBooks);
         } else {
             return gson.toJson(allBooks);
         }
     }
 
-    private String csvBuilder(BookList books) {
+    private String bookToDelimitedString(BookList books) {
         StringBuilder sb = new StringBuilder();
         List<Book> allBooks = books.getBooks();
         for (Book allBook : allBooks) {

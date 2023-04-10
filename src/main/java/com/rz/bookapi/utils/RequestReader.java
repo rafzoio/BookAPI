@@ -1,12 +1,15 @@
 package com.rz.bookapi.utils;
 
 import com.google.gson.Gson;
+import com.rz.bookapi.model.Book;
 import com.rz.bookapi.model.BookList;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestReader {
 
@@ -31,10 +34,30 @@ public class RequestReader {
             } catch (JAXBException e) {
                 throw new RuntimeException(e);
             }
-        } else if (contentType.equals("application/json")) {
-            return gson.fromJson(requestData, BookList.class);
+        } else if (contentType.equals("text/plain")) {
+            return delimitedStringToBook(requestData);
         } else {
-            return null;
+            return gson.fromJson(requestData, BookList.class);
         }
+    }
+
+    private BookList delimitedStringToBook(String inputString) {
+        String[] lines = inputString.split("\n");
+        BookList bookList = new BookList();
+        List<Book> newBooks = new ArrayList<>();
+        for (String line : lines) {
+            String[] props = line.split("#");
+            Book newBook = new Book(
+                    props[0],
+                    props[1],
+                    props[2],
+                    props[3],
+                    props[4],
+                    props[5]
+            );
+            newBooks.add(newBook);
+        }
+        bookList.setBooks(newBooks);
+        return bookList;
     }
 }
