@@ -106,14 +106,11 @@ public class BookAPIController extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String idParam = request.getParameter("id");
-
         bookDAO.deleteBook(Integer.parseInt(idParam));
-
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        PrintWriter out = response.getWriter();
+        out.write("Book with id " + idParam + " was deleted.");
         response.setStatus(200);
     }
 
@@ -138,9 +135,6 @@ public class BookAPIController extends HttpServlet {
             throw new RuntimeException(e);
         }
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setStatus(200);
     }
 }
