@@ -1,12 +1,14 @@
 package com.rz.bookapi.utils;
 
 import com.google.gson.Gson;
+import com.rz.bookapi.model.Book;
 import com.rz.bookapi.model.BookList;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.List;
 
 public class ResponseWriter {
 
@@ -24,9 +26,7 @@ public class ResponseWriter {
     }
 
     public String print(BookList allBooks, String format) {
-        if (format.equals("application/json")) {
-            return gson.toJson(allBooks);
-        } else if (format.equals("application/xml")) {
+        if (format.equals("application/xml")) {
             Marshaller m;
             StringWriter sw = new StringWriter();
             try {
@@ -37,6 +37,32 @@ public class ResponseWriter {
                 throw new RuntimeException(e);
             }
             return sw.toString();
-        } else return allBooks.toString();
+        } else if (format.equals("text/plain")) {
+            return csvBuilder(allBooks);
+        } else {
+            return gson.toJson(allBooks);
+        }
+    }
+
+    private String csvBuilder(BookList books) {
+        StringBuilder sb = new StringBuilder();
+        List<Book> allBooks = books.getBooks();
+        for (Book allBook : allBooks) {
+            sb.append(allBook.getId())
+                    .append('#')
+                    .append(allBook.getTitle())
+                    .append('#')
+                    .append(allBook.getAuthor())
+                    .append('#')
+                    .append(allBook.getDate())
+                    .append('#')
+                    .append(allBook.getGenres())
+                    .append('#')
+                    .append(allBook.getCharacters())
+                    .append('#')
+                    .append(allBook.getSynopsis())
+                    .append("\n");
+        }
+        return sb.toString();
     }
 }
