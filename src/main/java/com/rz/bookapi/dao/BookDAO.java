@@ -123,19 +123,21 @@ public class BookDAO {
         }
     }
 
-    public void deleteBook(int id) {
+    public boolean deleteBook(int id) {
         openConnection();
+        boolean deleted = false;
         try {
             PreparedStatement deleteBook = conn.prepareStatement("DELETE FROM books WHERE id = ?");
             deleteBook.setInt(1, id);
 
             deleteBook.executeUpdate();
-
+            deleted = true;
             deleteBook.close();
             closeConnection();
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+        return deleted;
     }
 
     public void updateBook(Book book) {

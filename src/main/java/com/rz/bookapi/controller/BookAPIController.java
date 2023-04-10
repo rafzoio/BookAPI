@@ -65,7 +65,6 @@ public class BookAPIController extends HttpServlet {
             try {
                 allBooks.setBooks(bookDAO.searchBooks(titleParam));
             } catch (NumberFormatException e) {
-                response.setStatus(500);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Title not found");
                 return;
             }
@@ -81,7 +80,7 @@ public class BookAPIController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String contentType = request.getHeader("Content-Type");
 
@@ -99,7 +98,8 @@ public class BookAPIController extends HttpServlet {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formatting issue");
+            return;
         }
 
         response.setStatus(201);
@@ -108,17 +108,25 @@ public class BookAPIController extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String idParam = request.getParameter("id");
-        bookDAO.deleteBook(Integer.parseInt(idParam));
+        boolean bookDeleted = bookDAO.deleteBook(Integer.parseInt(idParam));
         PrintWriter out = response.getWriter();
-        out.write("Book with id " + idParam + " was deleted.");
-        response.setStatus(200);
+        if (bookDeleted) {
+            out.write("Book with id " + idParam + " deleted.");
+            response.setStatus(200);
+        } else {
+            out.write("Book with id " + idParam + " deleted.");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No book exists of id " + idParam);
+        }
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String contentType = request.getHeader("Content-Type");
 
+        int id;
+
+        PrintWriter out = response.getWriter();
         InputStream inputStream;
 
         try {
@@ -130,11 +138,13 @@ public class BookAPIController extends HttpServlet {
 
             for (Book book : books.getBooks()) {
                 bookDAO.updateBook(book);
+                id = book.getId();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No book exists of id " + idParam);
         }
 
+        out.write("Book with id " + idParam + " was updated.");
         response.setStatus(200);
     }
 }
