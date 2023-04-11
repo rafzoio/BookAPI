@@ -8,5 +8,13 @@
       <jdbc-url>jdbc:mariadb://mudfoot.doc.stu.mmu.ac.uk:6306/zoioraph</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="GCBookDB" uuid="adfc1d58-24de-48a7-ab4b-2a69b06ea01d">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://34.105.147.73:3306</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
