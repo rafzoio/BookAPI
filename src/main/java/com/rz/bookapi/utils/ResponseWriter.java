@@ -16,13 +16,22 @@ public class ResponseWriter {
 
     private final JAXBContext jaxbContext;
 
-    public ResponseWriter() {
+    private static ResponseWriter instance;
+
+    private ResponseWriter() {
         this.gson = new Gson();
         try {
             this.jaxbContext = JAXBContext.newInstance(BookList.class);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ResponseWriter getInstance() {
+        if (instance == null) {
+            instance = new ResponseWriter();
+        }
+        return instance;
     }
 
     public String print(BookList allBooks, String format) {

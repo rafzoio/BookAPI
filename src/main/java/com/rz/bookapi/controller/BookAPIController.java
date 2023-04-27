@@ -26,9 +26,9 @@ public class BookAPIController extends HttpServlet {
 
     @Override
     public void init() {
-        bookDAO = new BookDAO();
-        responseWriter = new ResponseWriter();
-        requestReader = new RequestReader();
+        bookDAO = BookDAO.getInstance();
+        responseWriter = ResponseWriter.getInstance();
+        requestReader = RequestReader.getInstance();
         inputStreamUtils = new InputStreamUtils();
     }
 
@@ -125,9 +125,6 @@ public class BookAPIController extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String contentType = request.getHeader("Content-Type");
-
-        Integer id = null;
-
         PrintWriter out = response.getWriter();
         InputStream inputStream;
 
@@ -140,13 +137,12 @@ public class BookAPIController extends HttpServlet {
 
             for (Book book : books.getBooks()) {
                 bookDAO.updateBook(book);
-                id = book.getId();
             }
         } catch (IOException e) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No book exists of id " + id);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No book exists");
         }
 
-        out.write("Book with id " + id + " was updated.");
+        out.write("Book was updated.");
         response.setStatus(200);
     }
 }

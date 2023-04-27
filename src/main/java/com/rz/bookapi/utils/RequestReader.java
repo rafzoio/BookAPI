@@ -13,17 +13,26 @@ import java.util.List;
 
 public class RequestReader {
 
+    private static RequestReader instance;
+
     private final Gson gson;
 
     private final JAXBContext jaxbContext;
 
-    public RequestReader() {
+    private RequestReader() {
         this.gson = new Gson();
         try {
             this.jaxbContext = JAXBContext.newInstance(BookList.class);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static RequestReader getInstance() {
+        if (instance == null) {
+            instance = new RequestReader();
+        }
+        return instance;
     }
 
     public BookList read(String requestData, String contentType) {

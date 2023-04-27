@@ -9,16 +9,23 @@ import java.util.List;
 
 public class BookDAO {
 
-    Book book = null;
-    Connection conn = null;
-    String user = "root";
-    String password = "password";
+    private static BookDAO instance;
+    private Book book = null;
+    private Connection conn = null;
+    protected final String user = "zoioraph";
+    protected final String password = "hertHopl9";
     // Note none default port used, 6306 not 3306
-    String url = "jdbc:mysql://34.105.147.73:3306/books";
+    String url = "jdbc:mysql://mudfoot.doc.stu.mmu.ac.uk:6306/zoioraph";
 
-    public BookDAO() {
+    private BookDAO() {
     }
 
+    public static BookDAO getInstance() {
+        if (instance == null) {
+            instance = new BookDAO();
+        }
+        return instance;
+    }
 
     private void openConnection() {
         // loading jdbc driver for mysql
