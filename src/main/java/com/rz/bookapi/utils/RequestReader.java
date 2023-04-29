@@ -55,7 +55,7 @@ public class RequestReader {
         BookList bookList = new BookList();
         List<Book> newBooks = new ArrayList<>();
         for (String line : lines) {
-            String[] props = line.split("#");
+            String[] props = line.split("#", -1);
             Book newBook = new Book(
                     props[0],
                     props[1],
