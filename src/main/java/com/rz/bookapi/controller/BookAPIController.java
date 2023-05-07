@@ -16,6 +16,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
+/**
+ * Main API Servlet with all crud methods implemented.
+ */
 @WebServlet(name = "BookAPI", value = "/book-api")
 public class BookAPIController extends HttpServlet {
 
@@ -24,6 +27,7 @@ public class BookAPIController extends HttpServlet {
     private RequestReader requestReader;
     private InputStreamUtils inputStreamUtils;
 
+    // initialise all dependencies
     @Override
     public void init() {
         bookDAO = BookDAO.getInstance();
@@ -32,69 +36,80 @@ public class BookAPIController extends HttpServlet {
         inputStreamUtils = new InputStreamUtils();
     }
 
+    // get request handler
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         PrintWriter out = response.getWriter();
 
+        // get required request headers and parameters
         String format = request.getHeader("Accept");
-
         String pageSizeParam = request.getParameter("pageSize");
         String pageNumberParam = request.getParameter("page");
-
-        int pageSize = (pageSizeParam != null) ? Integer.parseInt(pageSizeParam) : 20;
-        int pageNumber = (pageNumberParam != null) ? Integer.parseInt(pageNumberParam) : 1;
-
-        BookList allBooks = new BookList();
-
         String idParam = request.getParameter("id");
-        String titleParam = request.getParameter("title");
+        String searchString = request.getParameter("title");
 
+        // get pageNumber/pageSize (default to 1/20 if null)
+        int pageNumber = (pageNumberParam != null) ? Integer.parseInt(pageNumberParam) : 1;
+        int pageSize = (pageSizeParam != null) ? Integer.parseInt(pageSizeParam) : 20;
+
+        BookList bookListResponse = new BookList();
+
+        // check first if id exists, then display one book
         int requestedID;
-
         if (idParam != null) {
             try {
                 requestedID = Integer.parseInt(idParam);
-                allBooks.setBooks(List.of(bookDAO.getBookByID(requestedID)));
+                bookListResponse.setBooks(List.of(bookDAO.getBookByID(requestedID)));
             } catch (NumberFormatException e) {
                 response.setStatus(500);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID not found");
                 return;
             }
-        } else if (titleParam != null) {
+            // then check if search string exists, if so return search results
+        } else if (searchString != null) {
             try {
-                allBooks.setBooks(bookDAO.searchBooks(titleParam));
+                bookListResponse.setBooks(bookDAO.searchBooks(searchString));
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Title not found");
                 return;
             }
+            // finally else respond with page of books
         } else {
-            allBooks.setBooks(bookDAO.getPageOfBooks(1000 + (pageSize * (pageNumber-1)), pageSize));
+            bookListResponse.setBooks(bookDAO.getPageOfBooks(1000 + (pageSize * (pageNumber-1)), pageSize));
         }
 
+        // set response values
         response.setContentType(format);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
         response.setHeader("X-Total-Pages", String.valueOf(bookDAO.getNumberOfPages(pageSize)));
-        out.write(responseWriter.print(allBooks, format));
+
+        // print books to response in specified format using responseWriter object.
+        out.write(responseWriter.print(bookListResponse, format));
     }
 
+    // post request handler
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        String contentType = request.getHeader("Content-Type");
 
         InputStream inputStream;
 
         PrintWriter out = response.getWriter();
 
+        // get format of received data
+        String contentType = request.getHeader("Content-Type");
+
         try {
             inputStream = request.getInputStream();
 
+            // parse input stream as a string
             String requestData = inputStreamUtils.getStringFromInputStream(inputStream);
 
+            // convert string into bookList object using requestReader object
             BookList books = requestReader.read(requestData, contentType);
 
+            // add received books to database
             for (Book book : books.getBooks()) {
                 bookDAO.addBook(book);
             }
@@ -108,11 +123,18 @@ public class BookAPIController extends HttpServlet {
         response.setStatus(201);
     }
 
+    // delete request handler
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // get id of book to delete
         String idParam = request.getParameter("id");
+
+        // use DAO to delete book and return whether it was deleted
         boolean bookDeleted = bookDAO.deleteBook(Integer.parseInt(idParam));
         PrintWriter out = response.getWriter();
+
+        // respond with error or success message
         if (bookDeleted) {
             out.write("Book with id " + idParam + " deleted.");
             response.setStatus(200);
@@ -121,20 +143,26 @@ public class BookAPIController extends HttpServlet {
         }
     }
 
+    // put response handler
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        String contentType = request.getHeader("Content-Type");
         PrintWriter out = response.getWriter();
         InputStream inputStream;
+
+        // get format of received data
+        String contentType = request.getHeader("Content-Type");
 
         try {
             inputStream = request.getInputStream();
 
+            // parse input stream as string
             String requestData = inputStreamUtils.getStringFromInputStream(inputStream);
 
+            // convert string to bookList object using requestReader object
             BookList books = requestReader.read(requestData, contentType);
 
+            // update edited books using DAO
             for (Book book : books.getBooks()) {
                 bookDAO.updateBook(book);
             }
