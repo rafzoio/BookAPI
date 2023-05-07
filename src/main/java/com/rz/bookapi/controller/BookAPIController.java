@@ -109,7 +109,7 @@ public class BookAPIController extends HttpServlet {
             String requestData = inputStreamUtils.getStringFromInputStream(inputStream);
 
             // convert string into bookList object using requestReader object
-            BookList books = requestReader.read(requestData, contentType);
+            BookList books = requestReader.read(requestData, contentType, "post");
 
             // add received books to database
             for (Book book : books.getBooks()) {
@@ -162,7 +162,7 @@ public class BookAPIController extends HttpServlet {
             String requestData = inputStreamUtils.getStringFromInputStream(inputStream);
 
             // convert string to bookList object using requestReader object
-            BookList books = requestReader.read(requestData, contentType);
+            BookList books = requestReader.read(requestData, contentType, "put");
 
             // update edited books using DAO
             for (Book book : books.getBooks()) {

@@ -38,11 +38,12 @@ public class RequestReader {
 
     /**
      * Read method to generate a BookList object from specified format
+     *
      * @param requestData book data from put or post request
      * @param contentType format of submitted data
      * @return BookList object containing Book objects
      */
-    public BookList read(String requestData, String contentType) {
+    public BookList read(String requestData, String contentType, String requestType) {
         // check if xml, then use jaxb to unmarshall xml
         if (contentType.equals("application/xml")) {
             try {
@@ -53,7 +54,7 @@ public class RequestReader {
             }
             // check if text/plain, then use delimitedStringToBookMethod
         } else if (contentType.equals("text/plain")) {
-            return delimitedStringToBook(requestData);
+            return delimitedStringToBook(requestData, requestType);
             // else treat as JSON and use GSON to parse data
         } else {
             return gson.fromJson(requestData, BookList.class);
@@ -62,23 +63,38 @@ public class RequestReader {
 
     /**
      * Converts delimited string into BookList object
+     *
      * @param inputString raw data in text/plain format
      * @return BookList of all books contained in data
      */
-    private BookList delimitedStringToBook(String inputString) {
+    private BookList delimitedStringToBook(String inputString, String requestType) {
         String[] lines = inputString.split("\n");
         BookList bookList = new BookList();
         List<Book> newBooks = new ArrayList<>();
         for (String line : lines) {
             String[] props = line.split("#", -1);
-            Book newBook = new Book(
-                    props[0],
-                    props[1],
-                    props[2],
-                    props[3],
-                    props[4],
-                    props[5]
-            );
+            Book newBook;
+            if (requestType.equals("put")) {
+                newBook = new Book(
+                        Integer.parseInt(props[0]),
+                        props[1],
+                        props[2],
+                        props[3],
+                        props[4],
+                        props[5],
+                        props[6]
+                );
+            } else {
+                newBook = new Book(
+                        props[0],
+                        props[1],
+                        props[2],
+                        props[3],
+                        props[4],
+                        props[5]
+                );
+            }
+
             newBooks.add(newBook);
         }
         bookList.setBooks(newBooks);
