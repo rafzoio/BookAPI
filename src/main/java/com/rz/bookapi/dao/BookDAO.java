@@ -27,6 +27,9 @@ public class BookDAO {
         return instance;
     }
 
+    /**
+     * Method to initialise connection to database.
+     */
     private void openConnection() {
         // loading jdbc driver for mysql
         try {
@@ -35,15 +38,16 @@ public class BookDAO {
             throw new RuntimeException(e);
         }
 
-        // connecting to database
         try {
-            // connection string for demos database, username demos, password demos
             conn = DriverManager.getConnection(url, user, password);
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    /**
+     * Method to close connection to database
+     */
     private void closeConnection() {
         try {
             conn.close();
@@ -52,6 +56,11 @@ public class BookDAO {
         }
     }
 
+    /**
+     * Method to generate a book object from jdbc result set
+     * @param rs result set
+     * @return Book
+     */
     private Book getNextBook(ResultSet rs) {
         Book thisBook;
         try {
@@ -63,6 +72,11 @@ public class BookDAO {
         return thisBook;
     }
 
+    /**
+     * Gets book from database by id
+     * @param id requested id
+     * @return Book
+     */
     public Book getBookByID(int id) {
 
         openConnection();
@@ -86,16 +100,15 @@ public class BookDAO {
         return book;
     }
 
+    /**
+     * Adds new book to database
+     * @param book new book
+     */
     public void addBook(Book book) {
         openConnection();
         try {
             PreparedStatement addBook = conn.prepareStatement("INSERT INTO books (title, author, date, genres, characters, synopsis) VALUES (?,?,?,?,?,?)");
-            addBook.setString(1, book.getTitle());
-            addBook.setString(2, book.getAuthor());
-            addBook.setString(3, book.getDate());
-            addBook.setString(4, book.getGenres());
-            addBook.setString(5, book.getCharacters());
-            addBook.setString(6, book.getSynopsis());
+            populateStatementWithBook(book, addBook);
 
             addBook.executeUpdate();
 
@@ -106,33 +119,48 @@ public class BookDAO {
         }
     }
 
+    /**
+     * Inserts book attributes into prepared SQL statement
+     * @param book book to insert
+     * @param statement prepared statement
+     */
+    private static void populateStatementWithBook(Book book, PreparedStatement statement) throws SQLException {
+        statement.setString(1, book.getTitle());
+        statement.setString(2, book.getAuthor());
+        statement.setString(3, book.getDate());
+        statement.setString(4, book.getGenres());
+        statement.setString(5, book.getCharacters());
+        statement.setString(6, book.getSynopsis());
+    }
+
+    /**
+     * Deletes a book from the database by id
+     * @param id requested id
+     */
     public boolean deleteBook(int id) {
-        boolean deleted;
         openConnection();
         try {
             PreparedStatement deleteBook = conn.prepareStatement("DELETE FROM books WHERE id = ?");
             deleteBook.setInt(1, id);
 
             deleteBook.executeUpdate();
-            deleted = true;
             deleteBook.close();
             closeConnection();
+            return true;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
-        return deleted;
     }
 
+    /**
+     * Updates a book already present in the database.
+     * @param book book with updated attributes
+     */
     public void updateBook(Book book) {
         openConnection();
         try {
             PreparedStatement updateBook = conn.prepareStatement("UPDATE books SET title = ?, author = ?, date = ?, genres = ?, characters = ?, synopsis = ? WHERE id = ?;");
-            updateBook.setString(1, book.getTitle());
-            updateBook.setString(2, book.getAuthor());
-            updateBook.setString(3, book.getDate());
-            updateBook.setString(4, book.getGenres());
-            updateBook.setString(5, book.getCharacters());
-            updateBook.setString(6, book.getSynopsis());
+            populateStatementWithBook(book, updateBook);
             updateBook.setInt(7, book.getId());
 
             updateBook.executeUpdate();
@@ -144,8 +172,12 @@ public class BookDAO {
         }
     }
 
+    /**
+     * Returns a list of books with titles matching the search keyword.
+     * @param keyword text string entered by user to be matched with book title
+     * @return matchingBooks
+     */
     public List<Book> searchBooks(String keyword) {
-
 
         List<Book> allBooks = new ArrayList<>();
         openConnection();
@@ -194,6 +226,11 @@ public class BookDAO {
         return allBooks;
     }
 
+    /**
+     * Returns number of pages of a specified size are needed to display all books contained in the database.
+     * @param pageSize length of one page
+     * @return number of pages required to display all books
+     */
     public int getNumberOfPages(int pageSize) {
         openConnection();
         int count = 0;
