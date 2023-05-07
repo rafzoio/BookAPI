@@ -18,15 +18,18 @@ public class ResponseWriter {
 
     private static ResponseWriter instance;
 
+    // initialise gson and jaxb dependencies
     private ResponseWriter() {
         this.gson = new Gson();
         try {
+            // set jaxb context to be of BookList.class type
             this.jaxbContext = JAXBContext.newInstance(BookList.class);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
     }
 
+    // get instance method to initialise singleton
     public static ResponseWriter getInstance() {
         if (instance == null) {
             instance = new ResponseWriter();
@@ -34,7 +37,14 @@ public class ResponseWriter {
         return instance;
     }
 
-    public String print(BookList allBooks, String format) {
+    /**
+     * Write method converts from a BookList class to string in specified format
+     * @param allBooks Booklist object to convert
+     * @param format requested format for response
+     * @return string value containing data in specified format
+     */
+    public String write(BookList allBooks, String format) {
+        // check xml, use jaxb to marshall data
         if (format.equals("application/xml")) {
             Marshaller m;
             StringWriter sw = new StringWriter();
@@ -46,18 +56,25 @@ public class ResponseWriter {
                 throw new RuntimeException(e);
             }
             return sw.toString();
+            // check text/plain, use bookToDelimitedString method to convert
         } else if (format.equals("text/plain")) {
             return bookToDelimitedString(allBooks);
+            // by default use GSON to convert booklist to JSON
         } else {
             return gson.toJson(allBooks);
         }
     }
 
+    /**
+     * Generates a delimited string of books
+     * @param books Booklist containing book objects
+     * @return delimited string
+     */
     private String bookToDelimitedString(BookList books) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         List<Book> allBooks = books.getBooks();
         for (Book allBook : allBooks) {
-            sb.append(allBook.getId())
+            builder.append(allBook.getId())
                     .append('#')
                     .append(allBook.getTitle())
                     .append('#')
@@ -72,6 +89,6 @@ public class ResponseWriter {
                     .append(allBook.getSynopsis())
                     .append("\n");
         }
-        return sb.toString();
+        return builder.toString();
     }
 }

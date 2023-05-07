@@ -14,20 +14,21 @@ import java.util.List;
 public class RequestReader {
 
     private static RequestReader instance;
-
     private final Gson gson;
-
     private final JAXBContext jaxbContext;
 
+    // initialise gson and jaxb dependencies
     private RequestReader() {
         this.gson = new Gson();
         try {
+            // set jaxb context to be of BookList.class type
             this.jaxbContext = JAXBContext.newInstance(BookList.class);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
     }
 
+    // get instance method to initialise singleton
     public static RequestReader getInstance() {
         if (instance == null) {
             instance = new RequestReader();
@@ -35,7 +36,14 @@ public class RequestReader {
         return instance;
     }
 
+    /**
+     * Read method to generate a BookList object from specified format
+     * @param requestData book data from put or post request
+     * @param contentType format of submitted data
+     * @return BookList object containing Book objects
+     */
     public BookList read(String requestData, String contentType) {
+        // check if xml, then use jaxb to unmarshall xml
         if (contentType.equals("application/xml")) {
             try {
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -43,13 +51,20 @@ public class RequestReader {
             } catch (JAXBException e) {
                 throw new RuntimeException(e);
             }
+            // check if text/plain, then use delimitedStringToBookMethod
         } else if (contentType.equals("text/plain")) {
             return delimitedStringToBook(requestData);
+            // else treat as JSON and use GSON to parse data
         } else {
             return gson.fromJson(requestData, BookList.class);
         }
     }
 
+    /**
+     * Converts delimited string into BookList object
+     * @param inputString raw data in text/plain format
+     * @return BookList of all books contained in data
+     */
     private BookList delimitedStringToBook(String inputString) {
         String[] lines = inputString.split("\n");
         BookList bookList = new BookList();

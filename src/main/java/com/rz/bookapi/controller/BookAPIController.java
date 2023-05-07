@@ -83,10 +83,12 @@ public class BookAPIController extends HttpServlet {
         response.setContentType(format);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
+
+        // set custom header to number of total pages for client pagination needs
         response.setHeader("X-Total-Pages", String.valueOf(bookDAO.getNumberOfPages(pageSize)));
 
         // print books to response in specified format using responseWriter object.
-        out.write(responseWriter.print(bookListResponse, format));
+        out.write(responseWriter.write(bookListResponse, format));
     }
 
     // post request handler
