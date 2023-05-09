@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="zoioraph@mudfoot.doc.stu.mmu.ac.uk" uuid="c9a4b454-cdf6-4217-842d-473f93a72831">
+    <data-source source="LOCAL" name="Mudfoot Book DB" uuid="c9a4b454-cdf6-4217-842d-473f93a72831">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mariadb://mudfoot.doc.stu.mmu.ac.uk:6306/zoioraph</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="GCBookDB" uuid="adfc1d58-24de-48a7-ab4b-2a69b06ea01d">
+    <data-source source="LOCAL" name="Google Cloud Book DB" uuid="5bb5497b-28bd-4b7e-9d17-ca2418c27ad5">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
-      <configured-by-url>true</configured-by-url>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://35.246.105.29:3306</jdbc-url>
+      <jdbc-url>jdbc:mysql://35.189.96.150:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

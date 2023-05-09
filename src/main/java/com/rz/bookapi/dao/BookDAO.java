@@ -12,10 +12,10 @@ public class BookDAO {
     private static BookDAO instance;
     private Book book = null;
     private Connection conn = null;
-    protected final String user = "zoioraph";
-    protected final String password = "hertHopl9";
+    protected final String user = "root";
+    protected final String password = "aIBG\"|>/j[1mb\\Zo";
     // Note none default port used, 6306 not 3306
-    String url = "jdbc:mysql://mudfoot.doc.stu.mmu.ac.uk:6306/zoioraph";
+    String url = "jdbc:mysql://35.189.96.150:3306/books";
 
     private BookDAO() {
     }
