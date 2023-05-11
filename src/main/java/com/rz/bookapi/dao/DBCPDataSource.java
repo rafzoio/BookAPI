@@ -5,10 +5,14 @@ import org.apache.commons.dbcp.BasicDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Basic Database Connecion Pooling using Apache Commons DBCP
+ */
 public class DBCPDataSource {
 
     private static final BasicDataSource ds;
 
+    // initialise driver and datasource
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -26,6 +30,7 @@ public class DBCPDataSource {
         ds.setMaxOpenPreparedStatements(100);
     }
 
+    // static method to return datasource connection
     public static Connection getConnection() throws SQLException {
         return ds.getConnection();
     }
