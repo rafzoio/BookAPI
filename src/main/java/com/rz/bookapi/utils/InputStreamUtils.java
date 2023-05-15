@@ -8,7 +8,6 @@ import java.util.Scanner;
 public class InputStreamUtils {
 
     public InputStreamUtils() {
-
     }
 
     /**

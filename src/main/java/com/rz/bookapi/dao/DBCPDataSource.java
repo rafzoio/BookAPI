@@ -9,9 +9,7 @@ import java.sql.SQLException;
  * Basic Database Connecion Pooling using Apache Commons DBCP
  */
 public class DBCPDataSource {
-
     private static final BasicDataSource ds;
-
     // initialise driver and datasource
     static {
         try {
